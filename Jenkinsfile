@@ -49,7 +49,7 @@ pipeline {
                 }
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'for-final-project', passwordVariable: 'AWS_SECRET_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                withCredentials([usernamePassword(credentialsId: 'for-final-project', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         amazon-linux-extras install docker
                         docker build -t $AWS_DOCKER_REGISTRY/$APP_NAME .
