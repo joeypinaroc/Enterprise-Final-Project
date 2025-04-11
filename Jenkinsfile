@@ -60,24 +60,25 @@ pipeline {
             }
         }
 
-        // stage("Deploy to AWS") {
-        //     agent {
-        //         docker {
-        //             image 'amazon/aws-cli'
-        //             reuseNode true
-        //             args '-u root --entrypoint=""'
-        //         }
-        //     }
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'for-final-project', passwordVariable: 'AWS_SECRET_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-        //             sh '''
-        //                 aws --version
-        //                 yum install jq -y
+        stage("Deploy to AWS") {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args '-u root --entrypoint=""'
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'for-final-project', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                        aws --version
+                        yum install jq -y
 
-        //                 LATEST_TD_REVISION=$(aws ecs )
-        //             '''
-        //         }
-        //     }
-        // }
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
+                        aws ecs update-service --cluster Task-Cluster-Final-Project --service final-project-service --task-definition TaskDefinition-Prod:$LATEST_TD_REVISION
+                    '''
+                }
+            }
+        }
     }
 }
